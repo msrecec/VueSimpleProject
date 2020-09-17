@@ -15,6 +15,17 @@
     <hr>
     <p v-html="finishedLink"></p>
   </div>
+  <div id="exercise">
+    <p>VueJS is pretty cool - {{ name }} ({{ age }})</p>
+    <p>{{ age*3 }}</p>
+    <p>{{randomNumber()}}</p>
+    <div>
+      <img v-bind:src="imageLink">
+    </div>
+    <div>
+      <input type="text" v-bind:value="name">
+    </div>
+  </div>
   <script>
     const app = new Vue({
       el: '#app',
@@ -30,6 +41,20 @@
         }
       }
     });
+
+    const exercise = new Vue({
+      el: '#exercise',
+      data: {
+        name: 'Mislav',
+        age: 25,
+        imageLink: 'https://vuejs.org/images/logo.png'
+      },
+      methods: {
+        randomNumber: function() {
+          return Math.random();
+        }
+      }
+    })
 
   </script>
 </body>
