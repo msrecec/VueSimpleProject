@@ -14,6 +14,12 @@
     border: 1px solid black;
   }
 
+  .effect {
+    width: 100px;
+    height: 100px;
+    border: 1px solid black;
+  }
+
   .highlight {
     background-color: red;
     width: 200px !important;
@@ -60,6 +66,19 @@
         placeholder="Enter a class: .highlight .shrink .axisX .axisY .background .defaultClass">
       <div :class="[classArray]"></div>
     </div>
+    <div>
+      <input type="text" @keyup.enter="handleEnteredClass">
+      <input type="text" @keyup.enter="activeY=$event.target.value===''?false:true">
+      <div :class="[{effect:true},enteredClass,{axisY:activeY}]"></div>
+    </div>
+    <div>
+      <input type="text" @keydown.enter="color = $event.target.value">
+      <div :style="myStyle"></div>
+    </div>
+    <div>
+      <button @click="startProgressBar">Start Progress</button>
+      <div :style="progressClass"></div>
+    </div>
   </div>
 
   <script>
@@ -71,6 +90,16 @@
         classArray: [{ 'highlight': false }, { 'shrink': false }, { 'axisX': false }, { 'axisY': false }, { 'background': false }, { 'defaultClass': false }],
         axisX: { 'axisX': true },
         axisY: { 'axisY': true },
+        activeY: false,
+        enteredClass: {},
+        color: 'white',
+        progressBarWidth: 0,
+        progressClass: {
+          backgroundColor: 'red',
+          height: '50px',
+          border: '1px solid black',
+          width: '0px'
+        }
       },
       methods: {
         startEffect: function () {
@@ -79,14 +108,19 @@
             vm.activeClass = !vm.activeClass;
           }, 1000)
         },
-        updateClassArray: function(event) {
+        handleEnteredClass: function (event) {
+          this.enteredClass = { [event.target.value]: true };
+          console.log(event.target.value);
+          console.log(this.enteredClass);
+        },
+        updateClassArray: function (event) {
           console.log(event.target.value);
           eventValue = event.target.value;
-          indexOfValue = this.classArray.findIndex(e => Object.keys(e)[0].localeCompare(event.target.value)===0);
-          if(indexOfValue < 0) {
+          indexOfValue = this.classArray.findIndex(e => Object.keys(e)[0].localeCompare(event.target.value) === 0);
+          if (indexOfValue < 0) {
             return;
           } else {
-            const myClassObject = this.classArray[this.classArray.findIndex(e => Object.keys(e)[0].localeCompare(event.target.value)===0)];
+            const myClassObject = this.classArray[this.classArray.findIndex(e => Object.keys(e)[0].localeCompare(event.target.value) === 0)];
             console.log(Object.keys(myClassObject));
             console.log(myClassObject[event.target.value]);
             myClassObject[event.target.value] = !myClassObject[event.target.value];
@@ -94,12 +128,27 @@
             // console.log(myClassObject);
             // myClassObject.eventValue = !myClassObject.eventValue;
           }
+        },
+        startProgressBar: function () {
+          vm = this;
+          setInterval(() => {
+            vm.progressBarWidth += 10;
+            vm.progressClass.width = `${vm.progressBarWidth}px`;
+          }, 1000)
         }
       },
       computed: {
         effectClass: function () {
           return { highlight: this.activeClass, shrink: !this.activeClass }
         },
+        myStyle: function () {
+          return {
+            backgroundColor: this.color,
+            width: '200px',
+            height: '200px',
+            border: '1px solid black'
+          }
+        }
       }
     });
   </script>
