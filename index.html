@@ -24,19 +24,27 @@
     width: 50px !important;
   }
 
-  .expandX {
-    background-color: royalblue;
-    width: 300px !important;
+  .axisX {
+    width: 150px;
   }
 
-  .expandY {
-    height: 300px !important;
+  .axisY {
+    height: 200px;
   }
 
-  .outputClassModel {
+  .background {
+    background-color: lightblue;
+    border: 1px solid blueviolet;
+  }
+
+  .defaultClass {
     width: 100px;
     height: 100px;
-    background-color: springgreen;
+    border: 1px solid blueviolet;
+  }
+
+  .defaultWidth {
+    width: 500px;
   }
 </style>
 
@@ -44,26 +52,13 @@
   <div id="exercise">
     <div>
       <button @click="startEffect">Start Effect</button>
-      <div id="effect" :class="{highlight: active, shrink: !active}"></div>
-      <div id="effect" :class="classModels"></div>
+      <div id="effect" :class="effectClass"></div>
     </div>
-    <div :class="['expandY', 'expandX']"></div>
+    <div :class="[axisX, axisY, {background:true}, {defaultClass:activeClass}]"></div>
     <div>
-      <input type="text" v-model="output">
-      <div :class="['outputClassModel', output]"></div>
-    </div>
-    <div>
-      <input type="text" v-model="anotherOutput">
-      <input type="text" v-model="oneMoreOutput">
-      <div :class="[anotherOutput, fourthOne]"></div>
-    </div>
-    <div>
-      <input type="text" v-model="superOutput">
-      <div :style="amazingStyle"></div>
-    </div>
-    <div>
-      <button @click="startProgress">Start Progress</button>
-      <div :style="progressBar"></div>
+      <input type="text" @keydown.enter="updateClassArray" :class="[{defaultWidth:true}]"
+        placeholder="Enter a class: .highlight .shrink .axisX .axisY .background .defaultClass">
+      <div :class="[classArray]"></div>
     </div>
   </div>
 
@@ -71,45 +66,40 @@
     new Vue({
       el: '#exercise',
       data: {
-        active: true,
-        output: '',
-        anotherOutput: 'outputClassModel',
-        oneMoreOutput: '',
-        superOutput: '',
-        bar: 10,
-      },
-      computed: {
-        classModels: function () {
-          return { highlight: !this.active, shrink: this.active };
-        },
-        fourthOne: function () {
-          return { 'expandY': this.oneMoreOutput }
-        },
-        amazingStyle: function () {
-          return { 'background-color': this.superOutput || 'red', width: '100px', height: '100px' }
-        },
-        progressBar: function () {
-          return {
-            'backgroundColor': 'red',
-            'width': `${this.bar}px`,
-            'height': '30px'
-          }
-        }
-
+        activeClass: true,
+        activeX: false,
+        classArray: [{ 'highlight': false }, { 'shrink': false }, { 'axisX': false }, { 'axisY': false }, { 'background': false }, { 'defaultClass': false }],
+        axisX: { 'axisX': true },
+        axisY: { 'axisY': true },
       },
       methods: {
         startEffect: function () {
           vm = this;
-          setInterval(function () {
-            vm.active = !vm.active;
-          }, 1000);
-        },
-        startProgress: function () {
-          vm = this;
-          setInterval(function () {
-            vm.bar += 10;
+          setInterval(() => {
+            vm.activeClass = !vm.activeClass;
           }, 1000)
+        },
+        updateClassArray: function(event) {
+          console.log(event.target.value);
+          eventValue = event.target.value;
+          indexOfValue = this.classArray.findIndex(e => Object.keys(e)[0].localeCompare(event.target.value)===0);
+          if(indexOfValue < 0) {
+            return;
+          } else {
+            const myClassObject = this.classArray[this.classArray.findIndex(e => Object.keys(e)[0].localeCompare(event.target.value)===0)];
+            console.log(Object.keys(myClassObject));
+            console.log(myClassObject[event.target.value]);
+            myClassObject[event.target.value] = !myClassObject[event.target.value];
+            console.log(myClassObject[event.target.value]);
+            // console.log(myClassObject);
+            // myClassObject.eventValue = !myClassObject.eventValue;
+          }
         }
+      },
+      computed: {
+        effectClass: function () {
+          return { highlight: this.activeClass, shrink: !this.activeClass }
+        },
       }
     });
   </script>
